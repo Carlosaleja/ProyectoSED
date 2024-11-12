@@ -5,47 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="/static/css/Styles.css">
-    <style>
-        /* Asegurarse de que todos los elementos estén alineados verticalmente */
-        .perfil-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px; /* Espacio entre cada sección */
-            max-width: 600px; /* Ancho máximo para mantener el contenido centrado */
-            margin: 0 auto;
-        }
-
-        .evento-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 10px;
-        }
-
-        /* Estilo para el contenedor de eventos */
-        #eventosContainer {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 15px;
-        }
-
-        /* Botón de cerrar sesión alineado con el resto */
-        button {
-            margin-top: 10px;
-        }
-    </style>
 </head>
 <body>
     <div class="perfil-container">
-        
+        <!-- Información del usuario -->
         <h2>Bienvenido, <span id="nombreUsuario"></span></h2>
         <p>Correo: <span id="correoUsuario"></span></p>
         <p>Carrera: <span id="carreraUsuario"></span></p>
         <p>Edad: <span id="edadUsuario"></span></p>
         <button onclick="cerrarSesion()">Cerrar Sesión</button>
 
+        <!-- Formulario para crear un evento -->
         <h3>Crear Evento</h3>
         <form id="crearEventoForm" class="evento-container">
             <input type="text" id="titulo" placeholder="Título" required>
@@ -60,14 +30,35 @@
             <button type="submit">Publicar</button>
         </form>
 
-        
+        <!-- Sección de eventos -->
         <h3>Eventos</h3>
-        <div id="eventosContainer"></div>
+        <div id="eventosContainer"> 
+ </div>
+	
+	<!-- Panel de Edición de Eventos -->
+    <div id="editarEventoPanel" class="hidden">
+        <h3>Editar Evento</h3>
+        <form id="editarEventoForm">
+            <input type="hidden" id="eventoId">
+            <input type="text" id="editarTitulo" placeholder="Título" required>
+            <textarea id="editarDescripcion" placeholder="Descripción" required></textarea>
+            <input type="text" id="editarCategoria" placeholder="Categoría">
+            <input type="date" id="editarFecha" required>
+            <select id="editarImportancia" required>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+            </select>
+            <button type="submit">Guardar Cambios</button>
+            <button type="button" id="cancelarEdicion">Cancelar</button>
+        </form>
     </div>
-
-
+    <!-- Cargar el script de JavaScript -->
     <script src="/static/js/script.js" defer></script>
 </body>
 </html>
+
+
+
 
 

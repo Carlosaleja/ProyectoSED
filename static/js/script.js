@@ -71,7 +71,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
 });
 
 
-// Cargar datos del usuario en la página de perfil
+// Cargar datos del usuario 
 document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname === "/perfil.html") {
         document.getElementById('nombreUsuario').innerText = sessionStorage.getItem('nombre') || "Invitado";
@@ -87,106 +87,13 @@ function cerrarSesion() {
     window.location.href = "/index.html"; 
 }
 
-/*
 document.getElementById('crearEventoForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const usuarioId = sessionStorage.getItem('usuarioId');
-    if (!usuarioId) {
-        alert('Error: No se encontró el usuario autenticado.');
-        return;
-    }
+    
+ // const id = sessionStorage.getItem('id');
+    const usuarioId = sessionStorage.getItem('id'); 
 
-    const evento = {
-        titulo: document.getElementById('titulo').value.trim(),
-        descripcion: document.getElementById('descripcion').value.trim(),
-        categoria: document.getElementById('categoria').value.trim() || 'General',
-        fecha: document.getElementById('fecha').value.trim(),
-        importancia: document.getElementById('importancia').value.trim(),
-        usuarioId: parseInt(usuarioId) // Asegúrate de enviar el ID como número
-    };
-
-
-	 console.log("Evento a enviar:", evento);
-
-    // Verifica campos obligatorios
-    if (!evento.titulo || !evento.descripcion || !evento.fecha || !evento.importancia) {
-        alert('Por favor, completa todos los campos obligatorios.');
-        return;
-    }
-
-    try {
-        const response = await fetch('http://192.168.1.5:8080/api/eventos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(evento)
-        });
-
-        if (response.ok) {
-            alert('Evento publicado con éxito');
-            document.getElementById('crearEventoForm').reset(); // Limpia el formulario
-            cargarEventos(); // Recarga los eventos para incluir el nuevo
-        } else {
-            const error = await response.json();
-            alert(`Error al publicar el evento: ${error.message || 'Error desconocido'}`);
-        }
-    } catch (error) {
-        console.error('Error en la solicitud:', error);
-        alert('Ocurrió un error al publicar el evento. Por favor, inténtalo nuevamente.');
-    }
-});
-*/
-
-/*
-document.getElementById('crearEventoForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Obtén el usuarioId desde sessionStorage
-    const id = sessionStorage.getItem('id');
-    if (!id) {
-        alert('Error: No se encontró el usuario autenticado.');
-        return;
-    }
-
-    // Crea el objeto evento con el usuarioId incluido
-    const evento = {
-        titulo: document.getElementById('titulo').value.trim(),
-        descripcion: document.getElementById('descripcion').value.trim(),
-        categoria: document.getElementById('categoria').value.trim() || 'General',
-        fecha: document.getElementById('fecha').value.trim(),
-        importancia: document.getElementById('importancia').value.trim(),
-        usuarioId: parseInt(id) // Asegúrate de enviar el usuarioId como número
-    };
-
-    console.log("Evento a enviar:", evento); // Verificación de los datos del evento antes de enviarlos
-
-    try {
-        // Envía la solicitud POST al backend con el evento
-        const response = await fetch('http://192.168.1.5:8080/api/eventos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(evento)
-        });
-
-        if (response.ok) {
-            alert('Evento publicado con éxito');
-            document.getElementById('crearEventoForm').reset(); // Limpia el formulario
-            cargarEventos(); // Recarga los eventos para incluir el nuevo
-        } else {
-            const error = await response.json();
-            alert(`Error al publicar el evento: ${error.message || 'Error desconocido'}`);
-        }
-    } catch (error) {
-        console.error('Error en la solicitud:', error);
-        alert('Ocurrió un error al publicar el evento. Por favor, inténtalo nuevamente.');
-    }
-}); */
-
-document.getElementById('crearEventoForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Obtén el usuarioId desde sessionStorage
-    const id = sessionStorage.getItem('id');
     if (!id) {
         alert('Error: No se encontró el usuario autenticado.');
         console.error("ID de usuario no encontrado en sessionStorage.");
@@ -212,7 +119,6 @@ document.getElementById('crearEventoForm')?.addEventListener('submit', async (e)
 
 
         if (response.ok) {
-            alert('Evento publicado con éxito');
             document.getElementById('crearEventoForm').reset();
             cargarEventos(); 
         } else {
@@ -225,13 +131,12 @@ document.getElementById('crearEventoForm')?.addEventListener('submit', async (e)
         alert('Ocurrió un error al publicar el evento. Por favor, inténtalo nuevamente.');
     }
 });
-
+//-----------------------------------------------------------------
 
 async function cargarEventos() {
     try {
         const response = await fetch('http://192.168.1.5:8080/api/eventos');
 
-        
         if (!response.ok) {
             throw new Error(`Error al obtener eventos: ${response.status}`);
         }
@@ -240,17 +145,41 @@ async function cargarEventos() {
         const eventosContainer = document.getElementById('eventosContainer');
         eventosContainer.innerHTML = ''; 
 
-        // Crea las cards dinámicamente
+        const usuarioId = sessionStorage.getItem('id'); 
+        const esAdmin = sessionStorage.getItem('rol') === 'admin'; 
+
         eventos.forEach(evento => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
                 <h4>${evento.titulo}</h4>
                 <p>${evento.descripcion}</p>
-                <p>Categoría: ${evento.categoria || 'No especificada'}</p>
-                <p>Fecha: ${evento.fecha}</p>
-                <p>Importancia: ${evento.importancia}</p>
+                <p><strong>Categoría:</strong> ${evento.categoria || 'No especificada'}</p>
+                <p><strong>Fecha:</strong> ${evento.fecha}</p>
+                <p><strong>Importancia:</strong> ${evento.importancia}</p>
             `;
+
+            if (evento.usuarioId == usuarioId || esAdmin) {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'actions';
+
+                const editButton = document.createElement('button');
+                editButton.className = 'edit-btn';
+                editButton.textContent = 'Editar';
+                editButton.dataset.eventId = evento.id; 
+                editButton.addEventListener('click', () => mostrarFormularioEdicion(evento));
+                actionsDiv.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-btn';
+                deleteButton.textContent = 'Eliminar';
+                deleteButton.dataset.eventId = evento.id; 
+                deleteButton.addEventListener('click', () => eliminarEvento(evento.id));
+                actionsDiv.appendChild(deleteButton);
+
+                card.appendChild(actionsDiv);
+            }
+
             eventosContainer.appendChild(card);
         });
     } catch (error) {
@@ -258,5 +187,96 @@ async function cargarEventos() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', cargarEventos);
 
+// edicion
+
+function mostrarFormularioEdicion(evento) {
+    document.getElementById('editarEventoPanel').classList.remove('hidden');
+    document.getElementById('eventoId').value = evento.id;
+    document.getElementById('editarTitulo').value = evento.titulo;
+    document.getElementById('editarDescripcion').value = evento.descripcion;
+    document.getElementById('editarCategoria').value = evento.categoria || '';
+    document.getElementById('editarFecha').value = evento.fecha;
+    document.getElementById('editarImportancia').value = evento.importancia;
+}
+
+document.getElementById('editarEventoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const eventoId = document.getElementById('eventoId').value.trim();
+    const usuarioId = sessionStorage.getItem('id');
+    const eventoActualizado = {
+        id: parseInt(eventoId),
+        titulo: document.getElementById('editarTitulo').value.trim(),
+        descripcion: document.getElementById('editarDescripcion').value.trim(),
+        categoria: document.getElementById('editarCategoria').value.trim(),
+        fecha: document.getElementById('editarFecha').value.trim(),
+        importancia: document.getElementById('editarImportancia').value.trim(),
+	usuarioId: parseInt(usuarioId)
+    };
+
+    if (!eventoActualizado.id || !eventoActualizado.titulo || !eventoActualizado.descripcion || !eventoActualizado.fecha || !eventoActualizado.importancia) {
+        alert('Por favor, completa todos los campos obligatorios.');
+        return;
+    }
+
+    try {
+      
+        const response = await fetch('http://192.168.1.5:8080/api/eventos', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Usuario-ID': sessionStorage.getItem('id'),
+            },
+            body: JSON.stringify(eventoActualizado),
+        });
+
+        if (response.ok) {
+            alert('Evento actualizado con éxito');
+            document.getElementById('editarEventoPanel').classList.add('hidden');
+            cargarEventos();
+        } else if (response.status === 403) {
+            alert('No tienes permisos para editar este evento.');
+        } else {
+            alert('Error al actualizar el evento.');
+        }
+    } catch (error) {
+        console.error('Error al actualizar el evento:', error);
+        alert('Ocurrió un error al intentar actualizar el evento.');
+    }
+});
+
+document.getElementById('cancelarEdicion').addEventListener('click', () => {
+    document.getElementById('editarEventoPanel').classList.add('hidden');
+});
+
+
+//eliminar un evento
+async function eliminarEvento(eventId) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este evento?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch('http://192.168.1.5:8080/api/eventos', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: eventId,
+                usuarioId: sessionStorage.getItem('id')
+            })
+        });
+
+        if (response.ok) {
+            alert('Evento eliminado con éxito');
+            cargarEventos(); 
+        } else {
+            alert('Error al eliminar el evento');
+        }
+    } catch (error) {
+        console.error('Error al eliminar el evento:', error);
+    }
+}
+
+// Cargar eventos al cargar la página
+document.addEventListener('DOMContentLoaded', cargarEventos);

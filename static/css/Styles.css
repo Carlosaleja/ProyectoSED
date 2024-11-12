@@ -1,3 +1,52 @@
+/* Contenedor principal para alinear los elementos verticalmente */
+.perfil-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Espacio entre cada sección */
+    max-width: 1000px; /* Ancho máximo para que el contenido esté centrado */
+    margin: 0 auto;
+    padding: 20px; /* Añadir un poco de padding alrededor */
+    box-sizing: border-box;
+}
+
+/* Contenedor del formulario de eventos */
+.evento-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+/* Contenedor de las tarjetas (cards) de eventos en estilo de cuadrícula */
+#eventosContainer {
+    display: flex;
+    flex-wrap: wrap; /* Permite que las tarjetas pasen a la línea siguiente */
+    gap: 20px;
+    justify-content: space-between; /* Asegura que las tarjetas se distribuyan uniformemente */
+    width: 100%;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+/* Estilo para cada tarjeta */
+.card {
+    flex: 1 1 calc(25% - 20px); /* Ocupa aproximadamente 25% del ancho del contenedor */
+    min-width: 200px; /* Asegura que no se hagan demasiado pequeñas */
+    max-width: 220px; /* Limita el ancho de cada tarjeta */
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* Botón de cerrar sesión alineado con el resto */
+button {
+    margin-top: 10px;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
@@ -58,4 +107,28 @@ button:hover {
     margin: 10px 0;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+    display: none;
+}
+
+#editarEventoPanel {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+#editarEventoForm input,
+#editarEventoForm textarea,
+#editarEventoForm select,
+#editarEventoForm button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
 }

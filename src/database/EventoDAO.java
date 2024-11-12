@@ -16,19 +16,18 @@ import java.util.List;
 
 public class EventoDAO {
 
-	public boolean crearEvento(Evento evento) {
-    try (Connection conn = DatabaseConnection.getConnection()) {
-        String sql = "INSERT INTO eventos (titulo, descripcion, categoria, fecha, importancia, usuario_id) VALUES (?, ?, ?, ?, ?, ?)";
-        PreparedStatement stmt = conn.prepareStatement(sql);
+    public boolean crearEvento(Evento evento) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(
+                 "INSERT INTO eventos (titulo, descripcion, categoria, fecha, importancia, usuario_id) VALUES (?, ?, ?, ?, ?, ?)")) {
         stmt.setString(1, evento.getTitulo());
         stmt.setString(2, evento.getDescripcion());
         stmt.setString(3, evento.getCategoria());
         stmt.setString(4, evento.getFecha());
         stmt.setString(5, evento.getImportancia());
-        stmt.setInt(6, evento.getUsuarioId()); 
-
-        int rowsAffected = stmt.executeUpdate();
-        return rowsAffected > 0; 
+        stmt.setInt(6, evento.getUsuarioId());
+        stmt.executeUpdate();
+        return true;
     } catch (SQLException e) {
         e.printStackTrace();
         return false;
@@ -58,21 +57,63 @@ public class EventoDAO {
         return eventos;
     }
 
-
-
-    public void actualizarEvento(Evento evento) {
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                     "UPDATE eventos SET titulo = ?, descripcion = ?, categoria = ?, fecha = ?, importancia = ? WHERE id = ?")) {
-            stmt.setString(1, evento.getTitulo());
-            stmt.setString(2, evento.getDescripcion());
-            stmt.setString(3, evento.getCategoria());
-            stmt.setString(4, evento.getFecha());
-            stmt.setString(5, evento.getImportancia());
-            stmt.setInt(6, evento.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public boolean verificarPermiso(int eventoId, int usuarioId) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement("SELECT usuario_id FROM eventos WHERE id = ?")) {
+        stmt.setInt(1, eventoId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            int creadorId = rs.getInt("usuario_id");
+            return creadorId == usuarioId || esAdministrador(usuarioId);
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
+
+
+private boolean esAdministrador(int usuarioId) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement("SELECT rol FROM usuarios WHERE id = ?")) {
+        stmt.setInt(1, usuarioId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            return "admin".equals(rs.getString("rol"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
+public void actualizarEvento(Evento evento) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(
+                 "UPDATE eventos SET titulo = ?, descripcion = ?, categoria = ?, fecha = ?, importancia = ? WHERE id = ?")) {
+        stmt.setString(1, evento.getTitulo());
+        stmt.setString(2, evento.getDescripcion());
+        stmt.setString(3, evento.getCategoria());
+        stmt.setString(4, evento.getFecha());
+        stmt.setString(5, evento.getImportancia());
+        stmt.setInt(6, evento.getId());
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+public void eliminarEvento(int eventoId) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement("DELETE FROM eventos WHERE id = ?")) {
+        stmt.setInt(1, eventoId);
+        stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
+
 }
