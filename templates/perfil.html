@@ -5,17 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario</title>
     <link rel="stylesheet" href="/static/css/Styles.css">
+    <style>
+        /* Asegurarse de que todos los elementos estén alineados verticalmente */
+        .perfil-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; /* Espacio entre cada sección */
+            max-width: 600px; /* Ancho máximo para mantener el contenido centrado */
+            margin: 0 auto;
+        }
 
+        .evento-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 10px;
+        }
+
+        /* Estilo para el contenedor de eventos */
+        #eventosContainer {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 15px;
+        }
+
+        /* Botón de cerrar sesión alineado con el resto */
+        button {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Bienvenido, <span id="nombreUsuario"></span></h2>
-    <p>Correo: <span id="correoUsuario"></span></p>
-    <p>Carrera: <span id="carreraUsuario"></span></p>
-    <p>Edad: <span id="edadUsuario"></span></p>
+    <div class="perfil-container">
+        
+        <h2>Bienvenido, <span id="nombreUsuario"></span></h2>
+        <p>Correo: <span id="correoUsuario"></span></p>
+        <p>Carrera: <span id="carreraUsuario"></span></p>
+        <p>Edad: <span id="edadUsuario"></span></p>
+        <button onclick="cerrarSesion()">Cerrar Sesión</button>
 
-    <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        <h3>Crear Evento</h3>
+        <form id="crearEventoForm" class="evento-container">
+            <input type="text" id="titulo" placeholder="Título" required>
+            <textarea id="descripcion" placeholder="Descripción" required></textarea>
+            <input type="text" id="categoria" placeholder="Categoría">
+            <input type="date" id="fecha" required>
+            <select id="importancia" required>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+            </select>
+            <button type="submit">Publicar</button>
+        </form>
 
-    <script src="/static/js/script.js"></script>
+        
+        <h3>Eventos</h3>
+        <div id="eventosContainer"></div>
+    </div>
+
+
+    <script src="/static/js/script.js" defer></script>
 </body>
 </html>
+
 

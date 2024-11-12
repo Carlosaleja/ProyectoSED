@@ -11,7 +11,7 @@ import java.util.List;
 
 public class UsuarioDAO {
 
-    // Crear un nuevo usuario
+
     public boolean registrarUsuario(Usuario usuario) {
         String query = "INSERT INTO usuarios (nombre, correo, contraseña, carrera, edad) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -29,7 +29,6 @@ public class UsuarioDAO {
         }
     }
 
-    // Leer un usuario por correo
 
     public Usuario obtenerUsuarioPorCorreo(String correo) {
         String query = "SELECT * FROM usuarios WHERE correo = ?";
@@ -55,7 +54,6 @@ public class UsuarioDAO {
     }
 
 
-    // Leer todos los usuarios
     public List<Usuario> obtenerTodosLosUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
         String query = "SELECT * FROM usuarios";
@@ -79,7 +77,7 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    // Actualizar un usuario
+
     public boolean actualizarUsuario(Usuario usuario) {
         String query = "UPDATE usuarios SET nombre = ?, contraseña = ?, carrera = ?, edad = ? WHERE correo = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -97,7 +95,6 @@ public class UsuarioDAO {
         }
     }
 
-    // Eliminar un usuario
     public boolean eliminarUsuarioPorCorreo(String correo) {
         String query = "DELETE FROM usuarios WHERE correo = ?";
         try (Connection conn = DatabaseConnection.getConnection();

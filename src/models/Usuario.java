@@ -1,7 +1,7 @@
 package models;
 
 public class Usuario {
-    private int id;
+    private int id;  // Cambiado de 'id' a 'usuarioId'
     private String nombre;
     private String correo;
     private String contraseña;
@@ -18,11 +18,11 @@ public class Usuario {
     }
 
     // Getters y Setters
-    public int getId() {
+    public int getId() {  // Cambiado de 'getId' a 'getUsuarioId'
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(int id) {  // Cambiado de 'setId' a 'setUsuarioId'
         this.id = id;
     }
 
@@ -66,3 +66,4 @@ public class Usuario {
         this.edad = edad;
     }
 }
+
