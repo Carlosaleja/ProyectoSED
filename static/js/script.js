@@ -91,7 +91,7 @@ document.getElementById('crearEventoForm')?.addEventListener('submit', async (e)
     e.preventDefault();
 
     
- // const id = sessionStorage.getItem('id');
+ 	const id = sessionStorage.getItem('id');
     const usuarioId = sessionStorage.getItem('id'); 
 
     if (!id) {
