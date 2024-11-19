@@ -36,6 +36,133 @@ public class Servidor {
         server.createContext("/api/usuarios/registro", new RegistroHandler());
         server.createContext("/api/usuarios/login", new LoginHandler());
         server.createContext("/api/usuarios", new UsuariosHandler());
+
+	server.createContext("/api/eventos/buscar", new HttpHandler() {
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+            String query = exchange.getRequestURI().getQuery(); 
+            String titulo = query != null ? query.split("=")[1] : "";
+
+            EventoDAO eventoDAO = new EventoDAO();
+            List<Evento> eventos = eventoDAO.buscarEventosPorTitulo(titulo);
+
+            Gson gson = new Gson();
+            String jsonResponse = gson.toJson(eventos);
+
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, jsonResponse.getBytes().length);
+
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(jsonResponse.getBytes());
+            }
+        } else {
+            exchange.sendResponseHeaders(405, -1); // Método no permitido
+        }
+    }
+});
+
+
+
+
+        server.createContext("/api/eventos", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange exchange) throws IOException {
+                EventoDAO eventoDAO = new EventoDAO();
+                Gson gson = new Gson();
+
+                try {
+                    if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+                     
+                        List<Evento> eventos = eventoDAO.obtenerEventos();
+                        String jsonResponse = gson.toJson(eventos);
+
+                        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                        exchange.getResponseHeaders().add("Content-Type", "application/json");
+
+                        byte[] responseBytes = jsonResponse.getBytes("UTF-8");
+                        exchange.sendResponseHeaders(200, responseBytes.length);
+                        try (OutputStream os = exchange.getResponseBody()) {
+                            os.write(responseBytes);
+                        }
+
+                    } else if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+                      
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), "UTF-8"))) {
+                            Evento nuevoEvento = gson.fromJson(reader, Evento.class);
+                            boolean creado = eventoDAO.crearEvento(nuevoEvento);
+
+                            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+                            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+
+                            if (creado) {
+                                exchange.sendResponseHeaders(201, -1); 
+                            } else {
+                                exchange.sendResponseHeaders(500, -1); 
+                            }
+                        }
+
+                    }
+			else if ("PUT".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), "UTF-8"))) {
+        Evento eventoActualizado = gson.fromJson(reader, Evento.class);
+
+        if (eventoDAO.verificarPermiso(eventoActualizado.getId(), eventoActualizado.getUsuarioId(), "editar")) {
+            eventoDAO.actualizarEvento(eventoActualizado);
+            exchange.sendResponseHeaders(200, -1); 
+        } else {
+            exchange.sendResponseHeaders(403, -1); 
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        exchange.sendResponseHeaders(500, -1);
+    }
+
+} else if ("DELETE".equalsIgnoreCase(exchange.getRequestMethod())) {
+
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), "UTF-8"))) {
+        Evento eventoAEliminar = gson.fromJson(reader, Evento.class);
+
+
+        if (eventoDAO.verificarPermiso(eventoAEliminar.getId(), eventoAEliminar.getUsuarioId(), "eliminar")) {
+            eventoDAO.eliminarEvento(eventoAEliminar.getId());
+            exchange.sendResponseHeaders(200, -1);
+        } else {
+            exchange.sendResponseHeaders(403, -1);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        exchange.sendResponseHeaders(500, -1);
+    }
+
+} else {
+    exchange.sendResponseHeaders(405, -1);
+}
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    exchange.sendResponseHeaders(500, -1);
+                }
+            }
+        });
+        
+        server.createContext("/", new StaticFileHandler());
+
+ 
+        server.setExecutor(null);
+        server.start();
+        System.out.println("Servidor iniciado en el puerto 8080");
+    }
+}
+/*
+public static void main(String[] args) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+
+        server.createContext("/api/usuarios/registro", new RegistroHandler());
+        server.createContext("/api/usuarios/login", new LoginHandler());
+        server.createContext("/api/usuarios", new UsuariosHandler());
         server.createContext("/api/eventos", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -117,7 +244,7 @@ public class Servidor {
         server.start();
         System.out.println("Servidor iniciado en el puerto 8080");
     }
-}
+}*/
 class StaticFileHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -175,7 +302,8 @@ class UsuariosHandler implements HttpHandler {
                         rs.getString("correo"),
                         "",                   
                         rs.getString("carrera"),
-                        rs.getInt("edad")
+                        rs.getInt("edad"),
+			rs.getString("rol")
                     );
                     usuarios.add(usuario);
                 }
@@ -217,7 +345,7 @@ class RegistroHandler implements HttpHandler {
             String carrera = jsonObject.get("carrera").getAsString();
             int edad = jsonObject.get("edad").getAsInt();
 
-            Usuario nuevoUsuario = new Usuario(nombre, correo, contraseña, carrera, edad);
+            Usuario nuevoUsuario = new Usuario(nombre, correo, contraseña, carrera, edad,"usuario");
             UsuarioDAO usuarioDAO = new UsuarioDAO();
             boolean registrado = usuarioDAO.registrarUsuario(nuevoUsuario);
 
@@ -258,6 +386,7 @@ class LoginHandler implements HttpHandler {
                 responseJson.addProperty("correo", usuario.getCorreo());
                 responseJson.addProperty("carrera", usuario.getCarrera());
                 responseJson.addProperty("edad", usuario.getEdad());
+		responseJson.addProperty("rol", usuario.getRol());
 
                 response = responseJson.toString();
                 exchange.getResponseHeaders().set("Content-Type", "application/json");

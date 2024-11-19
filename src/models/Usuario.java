@@ -1,28 +1,42 @@
 package models;
 
 public class Usuario {
-    private int id;  // Cambiado de 'id' a 'usuarioId'
+    private int id;
     private String nombre;
     private String correo;
     private String contraseña;
     private String carrera;
     private int edad;
+    private String rol;
 
-    // Constructor
-    public Usuario(String nombre, String correo, String contraseña, String carrera, int edad) {
+  
+    public Usuario(String nombre, String correo, String contraseña, String carrera, int edad,String rol) {
         this.nombre = nombre;
         this.correo = correo;
         this.contraseña = contraseña;
         this.carrera = carrera;
         this.edad = edad;
+	this.rol = rol;
     }
 
-    // Getters y Setters
-    public int getId() {  // Cambiado de 'getId' a 'getUsuarioId'
+    public Usuario(String nombre, String correo, String contraseña, String carrera, int edad) {
+        this(nombre, correo, contraseña, carrera, edad, "usuario");
+    }
+
+    public String getRol() {
+    return rol;
+    }
+
+    public void setRol(String rol) { 
+        this.rol = rol;
+    }
+
+    
+    public int getId() { 
         return id;
     }
 
-    public void setId(int id) {  // Cambiado de 'setId' a 'setUsuarioId'
+    public void setId(int id) {
         this.id = id;
     }
 

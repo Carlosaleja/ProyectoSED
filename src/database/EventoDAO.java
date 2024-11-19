@@ -56,7 +56,7 @@ public class EventoDAO {
         }
         return eventos;
     }
-
+/*
     public boolean verificarPermiso(int eventoId, int usuarioId) {
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement("SELECT usuario_id FROM eventos WHERE id = ?")) {
@@ -72,8 +72,6 @@ public class EventoDAO {
     return false;
 }
 
-
-
 private boolean esAdministrador(int usuarioId) {
     try (Connection conn = DatabaseConnection.getConnection();
          PreparedStatement stmt = conn.prepareStatement("SELECT rol FROM usuarios WHERE id = ?")) {
@@ -86,6 +84,55 @@ private boolean esAdministrador(int usuarioId) {
         e.printStackTrace();
     }
     return false;
+}
+*/
+
+public boolean verificarPermiso(int eventoId, int usuarioId, String accion) {
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement("SELECT usuario_id FROM eventos WHERE id = ?")) {
+        stmt.setInt(1, eventoId);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            int creadorId = rs.getInt("usuario_id");
+
+            // Permitir siempre al creador del evento
+            if (creadorId == usuarioId) {
+                return true;
+            }
+
+            // Verificar roles de administrador o super administrador
+            String rolUsuario = obtenerRolUsuario(usuarioId);
+            if ("super_admin".equals(rolUsuario)) {
+                return true; // Los super administradores tienen todos los permisos
+            } else if ("admin".equals(rolUsuario)) {
+                return "editar".equals(accion) || "eliminar".equals(accion); // Admin puede editar/eliminar
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false; // Permiso denegado por defecto
+}
+
+private String obtenerRolUsuario(int usuarioId) {
+    String rol = "";
+    String sql = "SELECT rol FROM usuarios WHERE id = ?";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, usuarioId);
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            rol = rs.getString("rol");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return rol;
 }
 
 
@@ -114,6 +161,31 @@ public void eliminarEvento(int eventoId) {
         e.printStackTrace();
     }
 }
+
+public List<Evento> buscarEventosPorTitulo(String titulo) {
+    List<Evento> eventos = new ArrayList<>();
+    String query = "SELECT * FROM eventos WHERE titulo LIKE ?";
+    try (Connection conn = DatabaseConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setString(1, "%" + titulo + "%");
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            eventos.add(new Evento(
+                rs.getInt("id"),
+                rs.getString("titulo"),
+                rs.getString("descripcion"),
+                rs.getString("categoria"),
+                rs.getString("fecha"),
+                rs.getString("importancia"),
+                rs.getInt("usuario_id")
+            ));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return eventos;
+}
+
 
 
 }
