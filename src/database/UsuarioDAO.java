@@ -53,31 +53,6 @@ public Usuario obtenerUsuarioPorCorreo(String correo) {
         return null;
     }
 
-/*
-public Usuario obtenerUsuarioPorCorreo(String correo) {
-    String query = "SELECT * FROM usuarios WHERE correo = ?";
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setString(1, correo);
-        try (ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return new Usuario(
-                    rs.getString("nombre"),
-                    rs.getString("correo"),
-                    rs.getString("contraseña"),
-                    rs.getString("carrera"),
-                    rs.getInt("edad"),
-                    rs.getString("rol") // Agregar rol desde la base de datos
-                );
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return null;
-}
-*/
-
     public List<Usuario> obtenerTodosLosUsuarios() {
         List<Usuario> usuarios = new ArrayList<>();
         String query = "SELECT * FROM usuarios";

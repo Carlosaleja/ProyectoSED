@@ -56,36 +56,6 @@ public class EventoDAO {
         }
         return eventos;
     }
-/*
-    public boolean verificarPermiso(int eventoId, int usuarioId) {
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement("SELECT usuario_id FROM eventos WHERE id = ?")) {
-        stmt.setInt(1, eventoId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            int creadorId = rs.getInt("usuario_id");
-            return creadorId == usuarioId || esAdministrador(usuarioId);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return false;
-}
-
-private boolean esAdministrador(int usuarioId) {
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement stmt = conn.prepareStatement("SELECT rol FROM usuarios WHERE id = ?")) {
-        stmt.setInt(1, usuarioId);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            return "admin".equals(rs.getString("rol"));
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return false;
-}
-*/
 
 public boolean verificarPermiso(int eventoId, int usuarioId, String accion) {
     try (Connection conn = DatabaseConnection.getConnection();
