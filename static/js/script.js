@@ -1,4 +1,13 @@
 // Manejar el envío del formulario de registro
+
+function sanitizeInput(input) {
+    const tempDiv = document.createElement('div');
+    tempDiv.textContent = input;
+    return tempDiv.innerHTML;
+}
+
+
+
 document.getElementById('registroForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 	console.log("Intentando registrar usuario...");
@@ -87,6 +96,7 @@ function cerrarSesion() {
     window.location.href = "/index.html"; 
 }
 
+
 //crear un evento
 document.getElementById('crearEventoForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -102,12 +112,12 @@ document.getElementById('crearEventoForm')?.addEventListener('submit', async (e)
     }
 
     const evento = {
-        titulo: document.getElementById('titulo').value.trim(),
-        descripcion: document.getElementById('descripcion').value.trim(),
-        categoria: document.getElementById('categoria').value.trim() || 'General',
-        fecha: document.getElementById('fecha').value.trim(),
-        importancia: document.getElementById('importancia').value.trim(),
-        usuarioId: parseInt(id)
+    titulo: sanitizeInput(document.getElementById('titulo').value.trim()),
+    descripcion: sanitizeInput(document.getElementById('descripcion').value.trim()),
+    categoria: sanitizeInput(document.getElementById('categoria').value.trim()),
+    fecha: document.getElementById('fecha').value.trim(),
+    importancia: document.getElementById('importancia').value.trim(),
+    usuarioId: parseInt(usuarioId),
     };
 
     try {
@@ -163,13 +173,15 @@ async function cargarEventos() {
 
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `
-                <h4>${evento.titulo}</h4>
-                <p>${evento.descripcion}</p>
-                <p><strong>Categoría:</strong> ${evento.categoria || 'No especificada'}</p>
-                <p><strong>Fecha:</strong> ${evento.fecha}</p>
-                <p><strong>Importancia:</strong> ${evento.importancia}</p>
-            `;
+
+		card.innerHTML = `
+    		<h4>${sanitizeInput(evento.titulo)}</h4>
+    		<p>${sanitizeInput(evento.descripcion)}</p>
+    		<p><strong>Categoría:</strong> ${sanitizeInput(evento.categoria) || 'No especificada'}</p>
+    		<p><strong>Fecha:</strong> ${evento.fecha}</p>
+    		<p><strong>Importancia:</strong> ${evento.importancia}</p>
+		`;
+
 
             if (evento.usuarioId == usuarioId || esAdmin || esSuperAdmin) {
                // console.log(`Permisos otorgados para evento: ${evento.id}`);
@@ -236,16 +248,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const eventoId = document.getElementById('eventoId').value.trim();
             const usuarioId = sessionStorage.getItem('id');
-            
-            const eventoActualizado = {
-                id: parseInt(eventoId),
-                titulo: document.getElementById('editarTitulo').value.trim(),
-                descripcion: document.getElementById('editarDescripcion').value.trim(),
-                categoria: document.getElementById('editarCategoria').value.trim(),
-                fecha: document.getElementById('editarFecha').value.trim(),
-                importancia: document.getElementById('editarImportancia').value.trim(),
-                usuarioId: parseInt(usuarioId),
-            };
+
+	const eventoActualizado = {
+    	id: parseInt(eventoId),
+    	titulo: sanitizeInput(document.getElementById('editarTitulo').value.trim()),
+    	descripcion: sanitizeInput(document.getElementById('editarDescripcion').value.trim()),
+    	categoria: sanitizeInput(document.getElementById('editarCategoria').value.trim()),
+    	fecha: document.getElementById('editarFecha').value.trim(),
+    	importancia: document.getElementById('editarImportancia').value.trim(),
+    	usuarioId: parseInt(usuarioId),
+	};
+
 
             try {
                 const response = await fetch('http://192.168.1.5:8080/api/eventos', {
@@ -333,7 +346,7 @@ document.getElementById('buscarEventosForm').addEventListener('submit', async (e
         const eventos = await response.json();
 
         const eventosContainer = document.getElementById('eventosContainer');
-        eventosContainer.innerHTML = ''; // Limpia el contenedor
+        eventosContainer.innerHTML = '';
 
         if (eventos.length === 0) {
             eventosContainer.innerHTML = '<p>No se encontró ningún evento con ese título.</p>';

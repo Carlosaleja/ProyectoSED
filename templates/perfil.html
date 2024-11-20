@@ -17,56 +17,86 @@
 
         <!-- Formulario para crear un evento -->
         <h3>Crear Evento</h3>
-        <form id="crearEventoForm" class="evento-container">
-            <input type="text" id="titulo" placeholder="Título" required>
-            <textarea id="descripcion" placeholder="Descripción" required></textarea>
-            <input type="text" id="categoria" placeholder="Categoría">
-            <input type="date" id="fecha" required>
-            <select id="importancia" required>
+        <form id="crearEventoForm" class="evento-container" autocomplete="off" novalidate>
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" placeholder="Título del evento" 
+                   maxlength="100" required pattern="[a-zA-Z0-9À-ÿ\s]+" 
+                   title="El título solo debe contener letras, números y espacios.">
+
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" placeholder="Descripción del evento" 
+                      maxlength="500" required></textarea>
+
+            <label for="categoria">Categoría:</label>
+            <input type="text" id="categoria" name="categoria" placeholder="Categoría del evento"
+                   maxlength="50" pattern="[a-zA-ZÀ-ÿ\s]*" 
+                   title="La categoría solo debe contener letras y espacios.">
+
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+
+            <label for="importancia">Importancia:</label>
+            <select id="importancia" name="importancia" required>
                 <option value="Alta">Alta</option>
                 <option value="Media">Media</option>
                 <option value="Baja">Baja</option>
             </select>
+
             <button type="submit">Publicar</button>
         </form>
 
-	<h3>Buscar Eventos</h3>
-<form id="buscarEventosForm">
-    <input type="text" id="buscarTitulo" placeholder="Buscar por título">
-    <button type="submit">Buscar</button>
-</form>
-
-
+        <!-- Formulario para buscar eventos -->
+        <h3>Buscar Eventos</h3>
+        <form id="buscarEventosForm" autocomplete="off" novalidate>
+            <label for="buscarTitulo">Buscar por título:</label>
+            <input type="text" id="buscarTitulo" name="buscarTitulo" placeholder="Título del evento"
+                   maxlength="100" pattern="[a-zA-Z0-9À-ÿ\s]*" 
+                   title="El título solo debe contener letras, números y espacios.">
+            <button type="submit">Buscar</button>
+        </form>
 
         <!-- Sección de eventos -->
         <h3>Eventos</h3>
-        <div id="eventosContainer"> 
- </div>
-	
-	<!-- Panel de Edición de Eventos -->
-    <div id="editarEventoPanel" class="hidden">
-        <h3>Editar Evento</h3>
-        <form id="editarEventoForm">
-            <input type="hidden" id="eventoId">
-            <input type="text" id="editarTitulo" placeholder="Título" required>
-            <textarea id="editarDescripcion" placeholder="Descripción" required></textarea>
-            <input type="text" id="editarCategoria" placeholder="Categoría">
-            <input type="date" id="editarFecha" required>
-            <select id="editarImportancia" required>
-                <option value="Alta">Alta</option>
-                <option value="Media">Media</option>
-                <option value="Baja">Baja</option>
-            </select>
-            <button type="submit">Guardar Cambios</button>
-            <button type="button" id="cancelarEdicion">Cancelar</button>
-        </form>
+        <div id="eventosContainer"></div>
+
+        <!-- Panel de Edición de Eventos -->
+        <div id="editarEventoPanel" class="hidden">
+            <h3>Editar Evento</h3>
+            <form id="editarEventoForm" autocomplete="off" novalidate>
+                <input type="hidden" id="eventoId">
+                
+                <label for="editarTitulo">Título:</label>
+                <input type="text" id="editarTitulo" name="editarTitulo" placeholder="Título del evento" 
+                       maxlength="100" required pattern="[a-zA-Z0-9À-ÿ\s]+" 
+                       title="El título solo debe contener letras, números y espacios.">
+
+                <label for="editarDescripcion">Descripción:</label>
+                <textarea id="editarDescripcion" name="editarDescripcion" placeholder="Descripción del evento" 
+                          maxlength="500" required></textarea>
+
+                <label for="editarCategoria">Categoría:</label>
+                <input type="text" id="editarCategoria" name="editarCategoria" placeholder="Categoría del evento"
+                       maxlength="50" pattern="[a-zA-ZÀ-ÿ\s]*" 
+                       title="La categoría solo debe contener letras y espacios.">
+
+                <label for="editarFecha">Fecha:</label>
+                <input type="date" id="editarFecha" name="editarFecha" required>
+
+                <label for="editarImportancia">Importancia:</label>
+                <select id="editarImportancia" name="editarImportancia" required>
+                    <option value="Alta">Alta</option>
+                    <option value="Media">Media</option>
+                    <option value="Baja">Baja</option>
+                </select>
+
+                <button type="submit">Guardar Cambios</button>
+                <button type="button" id="cancelarEdicion">Cancelar</button>
+            </form>
+        </div>
     </div>
+
     <!-- Cargar el script de JavaScript -->
     <script src="/static/js/script.js" defer></script>
 </body>
 </html>
-
-
-
-
 

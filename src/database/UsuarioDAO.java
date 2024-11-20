@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import org.owasp.encoder.Encode;
 
 public class UsuarioDAO {
 
@@ -16,11 +16,13 @@ public class UsuarioDAO {
         String query = "INSERT INTO usuarios (nombre, correo, contraseña, carrera, edad) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, usuario.getNombre());
-            stmt.setString(2, usuario.getCorreo());
+            
+	    stmt.setString(1, Encode.forHtml(usuario.getNombre()));
+            stmt.setString(2, Encode.forHtml(usuario.getCorreo()));
             stmt.setString(3, usuario.getContraseña());
-            stmt.setString(4, usuario.getCarrera());
+            stmt.setString(4, Encode.forHtml(usuario.getCarrera()));
             stmt.setInt(5, usuario.getEdad());
+
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -33,16 +35,18 @@ public Usuario obtenerUsuarioPorCorreo(String correo) {
         String query = "SELECT * FROM usuarios WHERE correo = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, correo);
+            
+		stmt.setString(1, Encode.forHtml(correo));
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Usuario usuario = new Usuario(
-                        rs.getString("nombre"),
-                        rs.getString("correo"),
+                        
+                        Encode.forHtml(rs.getString("nombre")),
+                        Encode.forHtml(rs.getString("correo")),
                         rs.getString("contraseña"),
-                        rs.getString("carrera"),
+                        Encode.forHtml(rs.getString("carrera")),
                         rs.getInt("edad"),
-			rs.getString("rol")
+                        Encode.forHtml(rs.getString("rol"))
                 );
                 usuario.setId(rs.getInt("id"));
                 return usuario;
@@ -61,11 +65,11 @@ public Usuario obtenerUsuarioPorCorreo(String correo) {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Usuario usuario = new Usuario(
-                        rs.getString("nombre"),
-                        rs.getString("correo"),
-                        rs.getString("contraseña"),
-                        rs.getString("carrera"),
-                        rs.getInt("edad")
+			Encode.forHtml(rs.getString("nombre")),
+                    Encode.forHtml(rs.getString("correo")),
+                    rs.getString("contraseña"),
+                    Encode.forHtml(rs.getString("carrera")),
+                    rs.getInt("edad")
                 );
                 usuario.setId(rs.getInt("id"));
                 usuarios.add(usuario);

@@ -5,36 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro</title>
     <link rel="stylesheet" href="/static/css/Styles.css">
-
 </head>
 <body>
     <h2>Registro de Usuario</h2>
-    <form id="registroForm">
+    <form id="registroForm" autocomplete="off" novalidate>
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
+        <input type="text" id="nombre" name="nombre" required 
+               maxlength="50" placeholder="Tu nombre completo"
+               pattern="[a-zA-ZÀ-ÿ\s]+" 
+               title="El nombre solo debe contener letras y espacios.">
 
         <label for="correo">Correo:</label>
-        <input type="email" id="correo" name="correo" required>
+        <input type="email" id="correo" name="correo" required 
+               maxlength="100" placeholder="usuario@ejemplo.com"
+               pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+               title="Ingrese un correo electrónico válido.">
 
         <label for="contraseña">Contraseña:</label>
-        <input type="password" id="contraseña" name="contraseña" required>
+        <input type="password" id="contraseña" name="contraseña" required 
+               minlength="8" maxlength="32" 
+               placeholder="Tu contraseña segura"
+               title="La contraseña debe tener entre 8 y 32 caracteres.">
 
         <label for="confirmarContraseña">Confirmar Contraseña:</label>
-        <input type="password" id="confirmarContraseña" name="confirmarContraseña" required>
+        <input type="password" id="confirmarContraseña" name="confirmarContraseña" required 
+               minlength="8" maxlength="32" 
+               placeholder="Repite tu contraseña"
+               title="Debe coincidir con la contraseña anterior.">
 
         <label for="carrera">Carrera:</label>
-        <input type="text" id="carrera" name="carrera">
+        <input type="text" id="carrera" name="carrera" 
+               maxlength="50" placeholder="Tu carrera profesional"
+               pattern="[a-zA-ZÀ-ÿ\s]+" 
+               title="La carrera solo debe contener letras y espacios.">
 
         <label for="edad">Edad:</label>
-        <input type="number" id="edad" name="edad" required>
+        <input type="number" id="edad" name="edad" required 
+               min="18" max="120" 
+               placeholder="Tu edad"
+               title="Debes tener al menos 18 años.">
 
         <button type="submit">Registrar</button>
     </form>
 
-    <!-- Enlace a la página de inicio de sesión -->
     <p>¿Ya tienes una cuenta? <a href="/login.html">Inicia sesión aquí</a></p>
 
-    <script src="/static/js/script.js"></script>
+    <script src="/static/js/script.js" defer></script>
 </body>
 </html>
+
 
